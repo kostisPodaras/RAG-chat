@@ -21,10 +21,10 @@ async def health_check():
     except Exception:
         services["ollama"] = "unhealthy"
     
-    # Check ChromaDB
+    # Check ChromaDB (using v2 API)
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.get(f"{settings.chroma_url}/api/v1/heartbeat", timeout=5.0)
+            response = await client.get(f"{settings.chroma_url}/api/v2", timeout=5.0)
             services["chromadb"] = "healthy" if response.status_code == 200 else "unhealthy"
     except Exception:
         services["chromadb"] = "unhealthy"

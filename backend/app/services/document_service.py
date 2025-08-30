@@ -1,33 +1,14 @@
-import chromadb
-from chromadb.config import Settings as ChromaSettings
 import fitz  # PyMuPDF
 from typing import List
 import uuid
-from sentence_transformers import SentenceTransformer
 
 from app.core.config import settings
+from app.services.simple_chromadb import SimpleChromaDB
 
 class DocumentService:
     def __init__(self):
-        # Initialize ChromaDB client
-        self.chroma_client = chromadb.HttpClient(
-            host=settings.chroma_url.replace('http://', '').split(':')[0],
-            port=int(settings.chroma_url.split(':')[-1]),
-            settings=ChromaSettings(
-                anonymized_telemetry=False
-            )
-        )
-        
-        # Get or create collection
-        try:
-            self.collection = self.chroma_client.get_collection(
-                name=settings.chroma_collection_name
-            )
-        except:
-            self.collection = self.chroma_client.create_collection(
-                name=settings.chroma_collection_name,
-                metadata={"description": "Document embeddings for RAG"}
-            )
+        # Initialize simple ChromaDB client
+        self.chroma_client = SimpleChromaDB()
     
     async def process_document(self, file_path: str, filename: str):
         """Process a PDF document and add to vector database"""
@@ -63,21 +44,25 @@ class DocumentService:
         
         # Add to ChromaDB
         if documents:
-            self.collection.add(
+            success = await self.chroma_client.add_documents(
                 documents=documents,
                 metadatas=metadatas,
                 ids=ids
             )
+            if not success:
+                raise Exception("Failed to add documents to ChromaDB")
     
     async def delete_document(self, filename: str):
         """Remove all chunks for a document from vector database"""
         # Get all document IDs for this filename
-        results = self.collection.get(
+        results = await self.chroma_client.get_documents_by_metadata(
             where={"filename": filename}
         )
         
         if results['ids']:
-            self.collection.delete(ids=results['ids'])
+            success = await self.chroma_client.delete_documents(ids=results['ids'])
+            if not success:
+                raise Exception("Failed to delete documents from ChromaDB")
     
     def _chunk_text(self, text: str, max_length: int = 500) -> List[str]:
         """Simple text chunking by sentences"""

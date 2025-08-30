@@ -1,42 +1,23 @@
-import chromadb
-from chromadb.config import Settings as ChromaSettings
 import httpx
 from typing import List, Tuple
 import json
 
 from app.core.config import settings
 from app.models.schemas import SourceReference
+from app.services.simple_chromadb import SimpleChromaDB
 
 class ChatService:
     def __init__(self):
-        # Initialize ChromaDB client
-        self.chroma_client = chromadb.HttpClient(
-            host=settings.chroma_url.replace('http://', '').split(':')[0],
-            port=int(settings.chroma_url.split(':')[-1]),
-            settings=ChromaSettings(
-                anonymized_telemetry=False
-            )
-        )
-        
-        # Get collection
-        try:
-            self.collection = self.chroma_client.get_collection(
-                name=settings.chroma_collection_name
-            )
-        except:
-            # Create empty collection if it doesn't exist
-            self.collection = self.chroma_client.create_collection(
-                name=settings.chroma_collection_name,
-                metadata={"description": "Document embeddings for RAG"}
-            )
+        # Initialize simple ChromaDB client
+        self.chroma_client = SimpleChromaDB()
     
     async def get_response(self, user_question: str) -> Tuple[str, List[SourceReference]]:
         """Get AI response using RAG pipeline"""
         
         # Step 1: Retrieve relevant documents
         try:
-            results = self.collection.query(
-                query_texts=[user_question],
+            results = await self.chroma_client.query_documents(
+                query_text=user_question,
                 n_results=5  # Get top 5 most relevant chunks
             )
         except Exception as e:
