@@ -33,8 +33,8 @@ class ApiService {
     });
   }
 
-  async getChatSessions(): Promise<ChatSession[]> {
-    return this.request<ChatSession[]>('/api/v1/chat/sessions');
+  async getChatSessions(page: number = 1, pageSize: number = 20): Promise<ChatSession[]> {
+    return this.request<ChatSession[]>(`/api/v1/chat/sessions?page=${page}&page_size=${pageSize}`);
   }
 
   async getChatMessages(sessionId: number): Promise<ChatMessage[]> {

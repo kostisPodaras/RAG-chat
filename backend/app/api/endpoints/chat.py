@@ -25,9 +25,17 @@ async def create_chat_session(
     return db_session
 
 @router.get("/chat/sessions", response_model=List[ChatSessionResponse])
-async def list_chat_sessions(db: Session = Depends(get_db)):
-    """List all chat sessions"""
-    return db.query(ChatSession).order_by(ChatSession.updated_at.desc()).all()
+async def list_chat_sessions(
+    page: int = 1,
+    page_size: int = 20,
+    db: Session = Depends(get_db)
+):
+    """List chat sessions with pagination"""
+    offset = (page - 1) * page_size
+    return db.query(ChatSession).order_by(
+        ChatSession.updated_at.desc(),
+        ChatSession.created_at.desc()
+    ).offset(offset).limit(page_size).all()
 
 @router.get("/chat/sessions/{session_id}/messages", response_model=List[ChatMessageResponse])
 async def get_chat_messages(session_id: int, db: Session = Depends(get_db)):

@@ -17,15 +17,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMoreSessions, setHasMoreSessions] = useState(true);
+  const PAGE_SIZE = 20;
 
   useEffect(() => {
     loadSessions();
   }, []);
 
-  const loadSessions = async () => {
+  const loadSessions = async (page: number = 1, append: boolean = false) => {
     try {
-      const data = await apiService.getChatSessions();
-      setSessions(data);
+      if (!append) setLoading(true);
+      const data = await apiService.getChatSessions(page, PAGE_SIZE);
+      
+      if (append) {
+        setSessions(prev => [...prev, ...data]);
+      } else {
+        setSessions(data);
+      }
+      
+      setHasMoreSessions(data.length === PAGE_SIZE);
+      setCurrentPage(page);
     } catch (error) {
       console.error('Error loading sessions:', error);
     } finally {
@@ -50,7 +62,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const refreshSessions = () => {
-    loadSessions();
+    setCurrentPage(1);
+    loadSessions(1, false);
+  };
+
+  const loadMoreSessions = () => {
+    if (hasMoreSessions && !loading) {
+      loadSessions(currentPage + 1, true);
+    }
   };
 
   // Expose refresh function globally for now
@@ -115,6 +134,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </button>
               </div>
             ))}
+            
+            {/* Load More Button */}
+            {hasMoreSessions && (
+              <div className="p-2">
+                <button
+                  onClick={loadMoreSessions}
+                  disabled={loading}
+                  className="w-full px-3 py-2 text-sm text-rag-secondary hover:text-rag-primary hover:bg-gray-50 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {loading ? 'Loading...' : 'Load More'}
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
