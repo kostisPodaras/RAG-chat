@@ -84,19 +84,48 @@ class DocumentService:
             if not success:
                 raise Exception("Failed to delete documents from ChromaDB")
     
-    def _chunk_text(self, text: str, max_length: int = 500) -> List[str]:
-        """Simple text chunking by sentences"""
-        sentences = text.replace('\n', ' ').split('. ')
+    def _chunk_text(self, text: str, max_length: int = 800) -> List[str]:
+        """Smart text chunking that preserves key information"""
+        
+        # For structured documents (like client files), try to keep sections together
+        # Look for common section breaks
+        sections = []
+        
+        # Split by common section markers first
+        for separator in ['\n\n', 'LEGAL ISSUES:', 'DAMAGES:', 'CASE DETAILS:', 'EMPLOYMENT DETAILS:', 'PERSONAL INFORMATION:', 'CLIENT ID:']:
+            if separator in text:
+                parts = text.split(separator)
+                if len(parts) > 1:
+                    sections = []
+                    for i, part in enumerate(parts):
+                        if i > 0:  # Add separator back except for first part
+                            sections.append(separator + part)
+                        else:
+                            sections.append(part)
+                    break
+        
+        # If no sections found, fall back to sentence splitting
+        if not sections:
+            sentences = text.replace('\n', ' ').split('. ')
+            sections = [s + '. ' for s in sentences if s.strip()]
+        
+        # Now combine sections into chunks
         chunks = []
         current_chunk = ""
         
-        for sentence in sentences:
-            if len(current_chunk + sentence) > max_length and current_chunk:
+        for section in sections:
+            section = section.strip()
+            if not section:
+                continue
+                
+            # If adding this section would exceed max_length and we have content, start new chunk
+            if len(current_chunk + section) > max_length and current_chunk:
                 chunks.append(current_chunk.strip())
-                current_chunk = sentence + ". "
+                current_chunk = section + " "
             else:
-                current_chunk += sentence + ". "
+                current_chunk += section + " "
         
+        # Add final chunk
         if current_chunk:
             chunks.append(current_chunk.strip())
         

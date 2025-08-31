@@ -8,14 +8,14 @@ import fitz  # PyMuPDF
 
 from app.core.config import settings
 from app.models.schemas import DocumentUploadResponse, DocumentListResponse
-from app.services.document_service import DocumentService
+from app.services.langchain_document_service import LangChainDocumentService
 
 router = APIRouter()
 
 @router.post("/documents/upload", response_model=DocumentUploadResponse)
 async def upload_document(
     file: UploadFile = File(...),
-    doc_service: DocumentService = Depends(DocumentService)
+    doc_service: LangChainDocumentService = Depends(LangChainDocumentService)
 ):
     """Upload and process a document (PDF or TXT)"""
     
@@ -52,13 +52,13 @@ async def upload_document(
             # For TXT files, treat as 1 page
             pages = 1
         
-        # Extract text and add to vector database
-        await doc_service.process_document(file_path, file.filename)
+        # Process document with LangChain
+        result = await doc_service.process_document(file_path, file.filename)
         
         return DocumentUploadResponse(
-            filename=file.filename,
-            pages=pages,
-            message=f"Document uploaded and processed successfully. {pages} {'page' if pages == 1 else 'pages'} indexed."
+            filename=result["filename"],
+            pages=result["pages"],
+            message=result["message"]
         )
         
     except Exception as e:
@@ -68,44 +68,19 @@ async def upload_document(
         raise HTTPException(status_code=500, detail=f"Error processing document: {str(e)}")
 
 @router.get("/documents", response_model=List[DocumentListResponse])
-async def list_documents():
+async def list_documents(
+    doc_service: LangChainDocumentService = Depends(LangChainDocumentService)
+):
     """List all uploaded documents"""
-    documents = []
-    
-    if not os.path.exists(settings.upload_dir):
-        return documents
-    
-    for filename in os.listdir(settings.upload_dir):
-        filename_lower = filename.lower()
-        if filename_lower.endswith('.pdf') or filename_lower.endswith('.txt'):
-            file_path = os.path.join(settings.upload_dir, filename)
-            stat = os.stat(file_path)
-            
-            # Get page count
-            try:
-                if filename_lower.endswith('.pdf'):
-                    doc = fitz.open(file_path)
-                    pages = len(doc)
-                    doc.close()
-                else:
-                    # TXT files have 1 page
-                    pages = 1
-            except:
-                pages = 0
-            
-            documents.append(DocumentListResponse(
-                filename=filename,
-                upload_date=datetime.fromtimestamp(stat.st_mtime),
-                pages=pages,
-                size_mb=stat.st_size / (1024 * 1024)
-            ))
-    
-    return sorted(documents, key=lambda x: x.upload_date, reverse=True)
+    try:
+        return await doc_service.get_all_documents()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error listing documents: {str(e)}")
 
 @router.delete("/documents/{filename}")
 async def delete_document(
     filename: str,
-    doc_service: DocumentService = Depends(DocumentService)
+    doc_service: LangChainDocumentService = Depends(LangChainDocumentService)
 ):
     """Delete a document and remove from vector database"""
     file_path = os.path.join(settings.upload_dir, filename)

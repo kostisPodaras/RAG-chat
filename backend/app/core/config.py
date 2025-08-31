@@ -8,11 +8,11 @@ class Settings(BaseSettings):
     api_port: int = 8001
     
     # Database
-    database_url: str = "sqlite:///./data/chat_history.db"
+    database_url: str = "postgresql://rag_user:rag_password@postgres:5432/rag_chat"
     
     # Ollama Configuration
     ollama_url: str = "http://ollama:11434"
-    ollama_model: str = "llama3.1:8b"
+    ollama_model: str = "llama3.2:3b"
     
     # ChromaDB Configuration
     chroma_url: str = "http://chromadb:8000"

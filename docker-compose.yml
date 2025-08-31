@@ -13,6 +13,25 @@ services:
       - OLLAMA_HOST=0.0.0.0
     restart: unless-stopped
 
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: rag-postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=rag_chat
+      - POSTGRES_USER=rag_user
+      - POSTGRES_PASSWORD=rag_password
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rag_user -d rag_chat"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # ChromaDB Vector Database
   chromadb:
     image: chromadb/chroma:0.5.0
@@ -42,10 +61,14 @@ services:
     environment:
       - OLLAMA_URL=http://ollama:11434
       - CHROMA_URL=http://chromadb:8000
-      - DATABASE_URL=sqlite:///./data/chat_history.db
+      - DATABASE_URL=postgresql://rag_user:rag_password@postgres:5432/rag_chat
     depends_on:
-      - ollama
-      - chromadb
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+      chromadb:
+        condition: service_started
     restart: unless-stopped
     develop:
       watch:
@@ -83,6 +106,7 @@ services:
 
 volumes:
   ollama_data:
+  postgres_data:
   chromadb_data:
   uploaded_docs:
   sqlite_data:

@@ -16,7 +16,6 @@ class ChatSessionResponse(BaseModel):
         from_attributes = True
 
 class ChatMessageCreate(BaseModel):
-    session_id: int
     content: str
 
 class SourceReference(BaseModel):
@@ -43,7 +42,7 @@ class DocumentUploadResponse(BaseModel):
 
 class DocumentListResponse(BaseModel):
     filename: str
-    upload_date: datetime
+    upload_date: Optional[datetime] = None
     pages: int
     size_mb: float
 

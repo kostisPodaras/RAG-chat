@@ -18,7 +18,8 @@ class ChatService:
         try:
             results = await self.chroma_client.query_documents(
                 query_text=user_question,
-                n_results=5  # Increase back to 5 for better coverage of multiple employees
+                n_results=5,  # Increase to 5 for better coverage of general queries
+                similarity_threshold=0.25  # Lower threshold for better recall on pattern matching
             )
         except Exception as e:
             # If no documents or query fails, proceed without context
@@ -47,22 +48,16 @@ class ChatService:
         
         # Step 3: Create prompt for Ollama
         if context:
-            prompt = f"""Based on the following context from uploaded documents, please answer the user's question thoroughly. When looking for multiple items (like employees, records, etc.), make sure to check ALL sources and include ALL matches found in the context.
+            prompt = f"""Answer the user's question using the provided context. Only use information that directly answers their question.
 
 Context:
 {context}
 
 User Question: {user_question}
 
-Instructions:
-- Review ALL sources provided in the context
-- Include ALL items that match the criteria from ANY source
-- Reference which specific sources you used for each item
-- Be thorough and don't miss any matching records
-
-Answer:"""
+Provide a clear, direct answer based on the relevant information."""
         else:
-            prompt = f"""No documents have been uploaded yet or no relevant information was found. Please provide a general response to this question:
+            prompt = f"""No relevant documents found for this question. Please provide a brief general response:
 
 {user_question}"""
         
@@ -76,7 +71,8 @@ Answer:"""
                     "options": {
                         "temperature": 0.7,
                         "top_p": 0.9,
-                        "num_predict": 1000
+                        "num_predict": 500,  # Reduce token limit for faster responses
+                        "num_ctx": 2048     # Limit context window
                     }
                 }
                 
@@ -86,7 +82,7 @@ Answer:"""
                 response = await client.post(
                     f"{settings.ollama_url}/api/generate",
                     json=payload,
-                    timeout=120.0  # Increase timeout to 2 minutes for model loading
+                    timeout=60.0  # Reasonable 1-minute timeout
                 )
                 
                 print(f"Ollama response status: {response.status_code}")
@@ -102,21 +98,13 @@ Answer:"""
             print(f"Exception in AI service: {e}")
             ai_response = f"Error communicating with AI service: {str(e)}"
         
-        # Step 5: Filter sources to only include ones mentioned in the AI response
+        # Step 5: Let AI handle source relevance - return all sources if AI used context
         filtered_sources = []
-        if context and all_sources:
-            # Extract filenames mentioned in the AI response
-            mentioned_files = set()
+        if context and all_sources and "no relevant" not in ai_response.lower():
+            # Simple approach: if AI generated content from context, return all sources
+            # Let the AI be responsible for only using relevant information
             for source_data in all_sources:
-                filename = source_data['metadata']['filename']
-                # Check if this filename or the person's name is mentioned in the AI response
-                if filename.lower() in ai_response.lower() or self._extract_name_from_filename(filename).lower() in ai_response.lower():
-                    mentioned_files.add(filename)
-            
-            # Only include sources that are actually mentioned in the response
-            for source_data in all_sources:
-                if source_data['metadata']['filename'] in mentioned_files:
-                    filtered_sources.append(source_data['source'])
+                filtered_sources.append(source_data['source'])
         
         return ai_response, filtered_sources
     

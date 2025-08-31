@@ -64,20 +64,56 @@ class SimpleChromaDB:
             print(f"Error adding documents to ChromaDB: {e}")
             return False
     
-    async def query_documents(self, query_text: str, n_results: int = 5) -> Dict[str, Any]:
-        """Query documents from collection"""
+    async def query_documents(self, query_text: str, n_results: int = 5, similarity_threshold: float = 0.7) -> Dict[str, Any]:
+        """Query documents from collection with similarity filtering"""
         if not await self.ensure_collection_exists():
-            return {'documents': [[]], 'metadatas': [[]]}
+            return {'documents': [[]], 'metadatas': [[]], 'distances': [[]]}
             
         try:
+            # Query more results to filter by similarity
             results = self.collection.query(
                 query_texts=[query_text],
-                n_results=n_results
+                n_results=min(n_results * 2, 10),  # Get more to filter
+                include=["documents", "metadatas", "distances"]
             )
-            return results
+            
+            # Filter results by similarity threshold
+            if 'distances' in results and results['distances'] and len(results['distances']) > 0:
+                filtered_docs = []
+                filtered_metadata = []
+                filtered_distances = []
+                
+                distances = results['distances'][0]
+                documents = results['documents'][0] if results['documents'] else []
+                metadatas = results['metadatas'][0] if results['metadatas'] else []
+                
+                for i, distance in enumerate(distances):
+                    # ChromaDB uses cosine distance (lower is better, 0-2 range)
+                    # Convert to similarity score (higher is better, 0-1 range)
+                    similarity = 1 - (distance / 2.0)
+                    
+                    if similarity >= similarity_threshold and i < len(documents) and i < len(metadatas):
+                        filtered_docs.append(documents[i])
+                        filtered_metadata.append(metadatas[i])
+                        filtered_distances.append(distance)
+                        
+                        if len(filtered_docs) >= n_results:
+                            break
+                
+                print(f"Query: '{query_text}' - Found {len(distances)} results, {len(filtered_docs)} passed similarity threshold {similarity_threshold}")
+                
+                return {
+                    'documents': [filtered_docs],
+                    'metadatas': [filtered_metadata],
+                    'distances': [filtered_distances]
+                }
+            else:
+                # Fallback if distances not available
+                return results
+                
         except Exception as e:
             print(f"Error querying ChromaDB: {e}")
-            return {'documents': [[]], 'metadatas': [[]]}
+            return {'documents': [[]], 'metadatas': [[]], 'distances': [[]]}
     
     async def delete_documents(self, ids: List[str]) -> bool:
         """Delete documents from collection"""

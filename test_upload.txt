@@ -1,0 +1,21 @@
+Employment Law Test Case
+
+CLIENT INFORMATION:
+Name: John Smith
+Case ID: TEST-001
+
+LEGAL ISSUES:
+- Wrongful termination
+- Unpaid overtime wages
+- Failure to provide meal breaks
+
+DAMAGES:
+- Lost wages: $45,000
+- Emotional distress: $15,000
+- Attorney fees: $25,000
+
+EMPLOYMENT DETAILS:
+Position: Software Developer
+Company: Tech Corp
+Duration: 2019-2023
+Salary: $85,000/year

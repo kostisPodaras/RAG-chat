@@ -8,7 +8,7 @@ from app.models.schemas import (
     ChatSessionCreate, ChatSessionResponse,
     ChatMessageCreate, ChatMessageResponse
 )
-from app.services.chat_service import ChatService
+from app.services.langchain_chat_service import LangChainChatService
 
 router = APIRouter()
 
@@ -51,7 +51,7 @@ async def send_message(
     session_id: int,
     message_data: ChatMessageCreate,
     db: Session = Depends(get_db),
-    chat_service: ChatService = Depends(ChatService)
+    chat_service: LangChainChatService = Depends(LangChainChatService)
 ):
     """Send a message and get AI response"""
     

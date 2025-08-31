@@ -1,0 +1,147 @@
+LEGAL RAG SYSTEM - TEST QUESTIONS FOR LAW FIRM
+=====================================================
+
+EMPLOYMENT LAW QUESTIONS:
+• What are the elements required to prove wrongful termination in California?
+• Which of our clients have wage and hour violation claims?
+• What is the statute of limitations for filing a discrimination complaint with DFEH?
+• Tell me about our client who was terminated after filing workers' compensation
+• What remedies are available for meal and rest break violations?
+• Who is our client with pregnancy discrimination issues?
+
+CONTRACT LAW QUESTIONS:
+• What are the four essential elements of a valid contract?
+• What is the difference between expectation damages and reliance damages?
+• Which client has a breach of contract case worth over $150,000?
+• What defenses are available when a contract is unconscionable?
+• What contracts must be in writing under the Statute of Frauds?
+• Tell me about Michael Rodriguez's contract dispute
+
+INTELLECTUAL PROPERTY QUESTIONS:
+• How long does copyright protection last in the United States?
+• What are the requirements for trade secret protection under California law?
+• Which clients have intellectual property disputes?
+• What is the difference between trademark and copyright protection?
+• Tell me about the photographer's copyright infringement case
+• What remedies are available for trade secret misappropriation?
+
+CORPORATE LAW QUESTIONS:
+• What are the fiduciary duties owed by corporate directors?
+• What business entity provides the best liability protection?
+• Which client has a partnership dissolution case?
+• What is the business judgment rule and when does it apply?
+• Tell me about James Wilson's partnership dispute
+• What are the requirements for S-Corporation status?
+
+PRIVACY AND DATA PROTECTION:
+• What rights does CCPA grant to California consumers?
+• Which businesses are subject to CCPA requirements?
+• What are the maximum penalties under GDPR?
+• What is the difference between CCPA and GDPR compliance?
+• How long do businesses have to notify about data breaches under GDPR?
+
+LITIGATION AND PROCEDURE:
+• What discovery tools are available in California civil litigation?
+• What is the maximum number of interrogatories allowed?
+• When should a motion for summary judgment be filed?
+• What factors should be considered in settlement valuation?
+• Tell me about our client cases that are in the discovery phase
+• Which cases have the highest settlement demands?
+
+CLIENT-SPECIFIC INQUIRIES:
+• What is Rebecca Martinez's settlement demand and why?
+• Which client has a medical malpractice case?
+• Tell me about the trade secret misappropriation case
+• Who is our client with the real estate fraud case?
+• What is the status of Angela Foster's discrimination case?
+• Which clients are seeking over $500,000 in damages?
+• Tell me about David Kim's wage and hour violations
+• What type of case does Jennifer Walsh have?
+
+CASE MANAGEMENT QUESTIONS:
+• Which cases are currently in settlement negotiations?
+• What is the total value of all our active cases combined?
+• Which employment law cases have the strongest claims?
+• Tell me about cases involving TechFlow Solutions Inc.
+• What cases involve misclassification of employees?
+• Which clients work in the technology sector?
+
+LEGAL RESEARCH QUESTIONS:
+• What is the current minimum wage in California?
+• How is overtime calculated for non-exempt employees?
+• What constitutes a material breach of contract?
+• When can punitive damages be awarded in employment cases?
+• What is the meet and confer requirement for motions?
+• How do you calculate front pay in wrongful termination cases?
+
+COMPARATIVE CASE ANALYSIS:
+• Compare the settlement demands of our employment law cases
+• Which case has the strongest liability claim?
+• What are the common elements in our intellectual property cases?
+• Which cases involve corporate defendants?
+• Compare the damages claimed in our personal injury cases
+• What patterns do you see in our wrongful termination cases?
+
+DAMAGE ASSESSMENT QUESTIONS:
+• What economic damages is Rebecca Martinez claiming?
+• How do you calculate pain and suffering damages?
+• What is the difference between back pay and front pay?
+• Which case involves the highest medical expenses?
+• What punitive damages are available in trade secret cases?
+• How are lost profits calculated in business disputes?
+
+PROCEDURAL QUESTIONS:
+• What documents are needed for a wrongful termination case?
+• When must expert witnesses be disclosed in California?
+• What is the deadline for responding to discovery requests?
+• How long do we have to file an appeal after judgment?
+• What are the requirements for a temporary restraining order?
+• When is mediation most effective in settlement negotiations?
+
+SETTLEMENT STRATEGY QUESTIONS:
+• What factors affect settlement value in discrimination cases?
+• When should we recommend accepting a settlement offer?
+• How do litigation costs impact settlement decisions?
+• What are the risks of going to trial versus settling?
+• Which cases are best suited for alternative dispute resolution?
+• How do you evaluate the strength of the opposing party's case?
+
+COMPLEX MULTI-PART QUESTIONS:
+• Which of our clients have cases against corporate defendants, what types of claims are involved, and what are the total damages sought?
+• Compare our employment law cases: which involve retaliation, what are the settlement demands, and which have the strongest claims?
+• Analyze our intellectual property cases: what laws were violated, what damages are claimed, and what injunctive relief is sought?
+• Review cases with settlement demands over $200,000: what are the case types, current status, and likelihood of success?
+
+LEGAL STRATEGY QUESTIONS:
+• What evidence do we need to strengthen Rebecca Martinez's case?
+• How can we maximize damages in the copyright infringement case?
+• What defenses might be raised in the trade secret misappropriation case?
+• Should we pursue class action status for the wage and hour violations?
+• What expert witnesses do we need for the medical malpractice case?
+• How can we expedite resolution of the partnership dissolution?
+
+====================
+TESTING INSTRUCTIONS:
+====================
+
+1. Copy one question at a time from above
+2. Paste into your RAG system chat interface
+3. Evaluate the response for:
+   - Accuracy of legal information
+   - Relevance of sources cited
+   - Completeness of answer
+   - Speed of response
+   - Source filtering quality
+
+4. Note any questions that produce:
+   - Incorrect legal information
+   - Irrelevant sources
+   - Incomplete answers
+   - Slow responses (>45 seconds)
+   - No relevant results when they should exist
+
+5. Test both:
+   - Legal reference questions (general law)
+   - Client-specific questions (case details)
+
+This comprehensive question set will thoroughly test your legal RAG system's capabilities!
