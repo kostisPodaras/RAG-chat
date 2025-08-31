@@ -1,0 +1,53 @@
+CONFIDENTIAL: Private Company Information
+
+Employee Records - RESTRICTED
+Employee ID: EMP-2024-001
+Name: John Smith
+Department: Software Engineering
+Salary: $95,000 annually
+Social Security: ***-**-1234
+Start Date: January 15, 2024
+Direct Manager: Sarah Johnson
+Security Clearance: Level 2
+
+Q4 2024 Financial Summary - INTERNAL ONLY
+Revenue: $2.4M (up 15% from Q3)
+Net Profit: $450K
+R&D Budget: $300K allocated for AI initiatives
+Marketing Spend: $180K focused on enterprise clients
+
+Key Clients:
+• MedTech Solutions Corp - $400K contract
+• Legal Partners LLC - $280K annual retainer
+• DataSecure Industries - $350K implementation project
+
+Product Roadmap 2025 - CONFIDENTIAL
+Q1 2025: Launch of AI-powered document analysis platform
+Target market: Legal firms and medical practices
+Expected revenue: $500K in first quarter
+Key differentiator: 100% local processing for privacy compliance
+
+Q2 2025: Mobile application release
+iOS and Android native apps
+Offline document processing capability
+Integration with existing desktop platform
+
+Technical Architecture - CONFIDENTIAL
+Vector Database: ChromaDB with custom optimizations
+Embedding model: sentence-transformers/all-MiniLM-L6-v2
+Chunk size: 500 characters with 50 character overlap
+Similarity threshold: 0.7 for relevance filtering
+
+LLM Integration: Local Ollama deployment
+Primary model: Llama 3.2 3B parameter
+Fallback models: Mistral 7B, CodeLlama
+Context window: 4096 tokens maximum
+
+Security Measures:
+All data processing occurs locally
+No external API calls or data transmission
+Encrypted storage for sensitive documents
+Access logging for compliance audits
+
+This document contains confidential and proprietary information.
+Unauthorized distribution is prohibited.

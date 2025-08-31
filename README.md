@@ -57,3 +57,5 @@ ChromaDB for embeddings
 ✅ Chat history sidebar
 
 ✅ Fully local & private (no external API calls)
+
+<!-- TODO Replace sqllite with postregress. Keep in mind docker updates -->

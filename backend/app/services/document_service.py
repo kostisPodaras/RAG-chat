@@ -11,36 +11,56 @@ class DocumentService:
         self.chroma_client = SimpleChromaDB()
     
     async def process_document(self, file_path: str, filename: str):
-        """Process a PDF document and add to vector database"""
-        
-        # Extract text from PDF
-        doc = fitz.open(file_path)
+        """Process a document (PDF or TXT) and add to vector database"""
         
         documents = []
         metadatas = []
         ids = []
         
-        for page_num in range(len(doc)):
-            page = doc[page_num]
-            text = page.get_text()
+        # Determine file type and extract text
+        if filename.lower().endswith('.pdf'):
+            # Extract text from PDF
+            doc = fitz.open(file_path)
             
-            # Skip empty pages
-            if not text.strip():
-                continue
+            for page_num in range(len(doc)):
+                page = doc[page_num]
+                text = page.get_text()
+                
+                # Skip empty pages
+                if not text.strip():
+                    continue
+                
+                # Split into chunks (simple sentence-based chunking)
+                chunks = self._chunk_text(text, max_length=500)
+                
+                for i, chunk in enumerate(chunks):
+                    documents.append(chunk)
+                    metadatas.append({
+                        "filename": filename,
+                        "page": page_num + 1,
+                        "chunk": i + 1
+                    })
+                    ids.append(str(uuid.uuid4()))
             
-            # Split into chunks (simple sentence-based chunking)
-            chunks = self._chunk_text(text, max_length=500)
+            doc.close()
             
-            for i, chunk in enumerate(chunks):
-                documents.append(chunk)
-                metadatas.append({
-                    "filename": filename,
-                    "page": page_num + 1,
-                    "chunk": i + 1
-                })
-                ids.append(f"{filename}_{page_num}_{i}_{uuid.uuid4().hex[:8]}")
-        
-        doc.close()
+        elif filename.lower().endswith('.txt'):
+            # Extract text from TXT file
+            with open(file_path, 'r', encoding='utf-8') as f:
+                text = f.read()
+            
+            if text.strip():
+                # Split into chunks (simple sentence-based chunking)
+                chunks = self._chunk_text(text, max_length=500)
+                
+                for i, chunk in enumerate(chunks):
+                    documents.append(chunk)
+                    metadatas.append({
+                        "filename": filename,
+                        "page": 1,  # Text files have only one "page"
+                        "chunk": i + 1
+                    })
+                    ids.append(str(uuid.uuid4()))
         
         # Add to ChromaDB
         if documents:

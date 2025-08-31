@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     
     # Ollama Configuration
     ollama_url: str = "http://ollama:11434"
-    ollama_model: str = "llama3.2:3b"
+    ollama_model: str = "llama3.1:8b"
     
     # ChromaDB Configuration
     chroma_url: str = "http://chromadb:8000"
@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     
     # File Upload Configuration
     max_file_size_mb: int = 50
-    allowed_extensions: List[str] = ["pdf"]
+    allowed_extensions: List[str] = ["pdf", "txt"]
     upload_dir: str = "uploads"
     
     # Privacy & Security

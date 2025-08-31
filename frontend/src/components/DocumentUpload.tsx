@@ -17,8 +17,9 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onUploadComplete
     if (!file) return;
 
     // Validate file type
-    if (!file.name.toLowerCase().endsWith('.pdf')) {
-      setError('Only PDF files are allowed');
+    const fileName = file.name.toLowerCase();
+    if (!fileName.endsWith('.pdf') && !fileName.endsWith('.txt')) {
+      setError('Only PDF and TXT files are allowed');
       return;
     }
 
@@ -46,7 +47,8 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onUploadComplete
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'application/pdf': ['.pdf']
+      'application/pdf': ['.pdf'],
+      'text/plain': ['.txt']
     },
     maxFiles: 1,
     disabled: uploading
@@ -87,11 +89,11 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onUploadComplete
             </p>
           </div>
         ) : isDragActive ? (
-          <p className="text-rag-primary font-medium">Drop the PDF file here!</p>
+          <p className="text-rag-primary font-medium">Drop the file here!</p>
         ) : (
           <div className="space-y-2">
             <p className="text-gray-900 font-medium">
-              Drop a PDF file here, or click to select
+              Drop a PDF or TXT file here, or click to select
             </p>
             <p className="text-sm text-rag-secondary">
               Maximum file size: 50MB
@@ -136,7 +138,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onUploadComplete
       )}
 
       <div className="mt-4 text-xs text-rag-secondary">
-        💡 Tip: Upload PDFs to enable AI to answer questions about your documents
+        💡 Tip: Upload PDF or TXT files to enable AI to answer questions about your documents
       </div>
     </div>
   );
