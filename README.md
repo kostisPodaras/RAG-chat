@@ -42,7 +42,7 @@ Self-hosted via Ollama
 
 Database
 
-SQLite (for chat history)
+PostgreSQL (for chat history)
 
 ChromaDB for embeddings
 

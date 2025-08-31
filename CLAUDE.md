@@ -63,7 +63,7 @@ pytest                     # Run tests
 
 **Database Design**:
 
-- SQLite for chat history (sessions/messages)
+- PostgreSQL for chat history (sessions/messages)
 - ChromaDB for document embeddings with metadata (filename, page, chunk)
 
 ### Frontend (`/frontend/src/`)
@@ -92,7 +92,7 @@ pytest                     # Run tests
 OLLAMA_URL=http://ollama:11434
 OLLAMA_MODEL=llama3.2:3b
 CHROMA_URL=http://chromadb:8000
-DATABASE_URL=sqlite:///./data/chat_history.db
+DATABASE_URL=postgresql://user:password@postgres:5432/rag_db
 MAX_FILE_SIZE_MB=50
 ```
 
@@ -115,7 +115,7 @@ MAX_FILE_SIZE_MB=50
 - `ollama_data` - Ollama models and cache
 - `chromadb_data` - Vector embeddings and metadata
 - `uploaded_docs` - Original uploaded files
-- `sqlite_data` - Chat history database
+- `postgres_data` - Chat history database
 
 ## Testing
 
