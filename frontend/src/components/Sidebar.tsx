@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ChatSession } from '../types';
 import { apiService } from '../services/api';
-import { PlusIcon, TrashIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/outline';
+import {
+  PlusIcon,
+  TrashIcon,
+  ChatBubbleLeftIcon,
+} from '@heroicons/react/24/outline';
 import { formatDistanceToNow } from 'date-fns';
 
 interface SidebarProps {
@@ -10,10 +14,10 @@ interface SidebarProps {
   onNewSession: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ 
-  currentSessionId, 
-  onSessionSelect, 
-  onNewSession
+export const Sidebar: React.FC<SidebarProps> = ({
+  currentSessionId,
+  onSessionSelect,
+  onNewSession,
 }) => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,13 +33,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
     try {
       if (!append) setLoading(true);
       const data = await apiService.getChatSessions(page, PAGE_SIZE);
-      
+
       if (append) {
         setSessions(prev => [...prev, ...data]);
       } else {
         setSessions(data);
       }
-      
+
       setHasMoreSessions(data.length === PAGE_SIZE);
       setCurrentPage(page);
     } catch (error) {
@@ -45,7 +49,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
-  const handleDeleteSession = async (sessionId: number, e: React.MouseEvent) => {
+  const handleDeleteSession = async (
+    sessionId: number,
+    e: React.MouseEvent
+  ) => {
     e.stopPropagation();
     if (!window.confirm('Delete this chat session?')) return;
 
@@ -100,15 +107,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         ) : (
           <div className="p-2">
-            {sessions.map((session) => (
+            {sessions.map(session => (
               <div
                 key={session.id}
                 onClick={() => onSessionSelect(session.id)}
                 className={`
                   group flex items-center justify-between p-3 rounded-lg cursor-pointer mb-1
-                  ${currentSessionId === session.id 
-                    ? 'bg-rag-primary/10 border border-rag-primary/20' 
-                    : 'hover:bg-gray-100'
+                  ${
+                    currentSessionId === session.id
+                      ? 'bg-rag-primary/10 border border-rag-primary/20'
+                      : 'hover:bg-gray-100'
                   }
                 `}
               >
@@ -120,13 +128,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         {session.title}
                       </p>
                       <p className="text-xs text-rag-secondary">
-                        {formatDistanceToNow(new Date(session.updated_at), { addSuffix: true })}
+                        {(() => {
+                          const timestamp =
+                            session.updated_at || session.created_at;
+                          const date = new Date(
+                            timestamp + (timestamp.includes('Z') ? '' : 'Z')
+                          );
+                          return formatDistanceToNow(date, { addSuffix: true });
+                        })()}
                       </p>
                     </div>
                   </div>
                 </div>
                 <button
-                  onClick={(e) => handleDeleteSession(session.id, e)}
+                  onClick={e => handleDeleteSession(session.id, e)}
                   className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-100 rounded transition-all"
                   title="Delete session"
                 >
@@ -134,7 +149,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </button>
               </div>
             ))}
-            
+
             {/* Load More Button */}
             {hasMoreSessions && (
               <div className="p-2">

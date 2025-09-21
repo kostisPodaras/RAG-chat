@@ -33,7 +33,6 @@ async def list_chat_sessions(
     """List chat sessions with pagination"""
     offset = (page - 1) * page_size
     return db.query(ChatSession).order_by(
-        ChatSession.updated_at.desc(),
         ChatSession.created_at.desc()
     ).offset(offset).limit(page_size).all()
 
